@@ -14,9 +14,9 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.4",
     "@modelcontextprotocol/server": "^2.0.0",
     "@money-manager/shared": "*",
-    "@hono/node-server": "^1.19.4",
     "dotenv": "^17.2.3",
     "hono": "^4.9.9",
     "zod": "^4.1.8"
@@ -29,6 +29,6 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.45.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   }
 }

@@ -18,7 +18,7 @@
     "@hono/node-server": "^1.19.4",
     "@hono/zod-validator": "^0.7.3",
     "@money-manager/shared": "*",
-    "drizzle-orm": "^0.44.5",
+    "drizzle-orm": "^0.45.3",
     "hono": "^4.9.9",
     "jose": "^6.1.0",
     "postgres": "^3.4.7",
@@ -33,6 +33,6 @@
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.45.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   }
 }
