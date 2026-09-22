@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useColorScheme } from 'react-native';
+import { StyleSheet, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SessionProvider, useSession } from '@/lib/session';
 import { darkTheme, lightTheme } from '@/theme';
@@ -24,7 +24,9 @@ function AuthGate() {
   }, [user, loading, segments, router]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <View style={styles.frame}>
+      <View style={styles.frameInner}>
+        <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="add" options={{ title: 'Add transaction', headerShown: true, presentation: 'card' }} />
       <Stack.Screen name="stats" options={{ title: 'Statistics', headerShown: true }} />
@@ -35,9 +37,16 @@ function AuthGate() {
       <Stack.Screen name="categories" options={{ title: 'Categories', headerShown: true }} />
       <Stack.Screen name="api-keys" options={{ title: 'API Keys', headerShown: true }} />
       <Stack.Screen name="transaction/[id]" options={{ title: 'Transaction', headerShown: true }} />
-    </Stack>
+        </Stack>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  frame: { flex: 1, alignItems: 'center' },
+  frameInner: { flex: 1, width: '100%', maxWidth: 1380 },
+});
 
 export default function RootLayout() {
   const scheme = useColorScheme();

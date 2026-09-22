@@ -13,6 +13,8 @@ export const lightTheme = {
     ...MD3LightTheme.colors,
     primary: brand.primary,
     secondary: '#4A6354',
+    background: '#F4F5FA',
+    surface: '#FFFFFF',
     income: brand.income,
     expense: brand.expense,
     transfer: brand.transfer,
@@ -31,3 +33,14 @@ export const darkTheme = {
 };
 
 export type AppColors = typeof lightTheme.colors;
+
+/** Shared card surface — rounded, subtle border, no heavy shadow. */
+export const cardStyle = {
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: '#E8E9F0',
+  backgroundColor: '#FFFFFF',
+} as const;
+
+/** Content column inside the centered app frame on wide screens. */
+export const contentWidth = 1120;

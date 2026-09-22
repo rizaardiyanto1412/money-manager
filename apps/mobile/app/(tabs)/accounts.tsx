@@ -5,15 +5,16 @@ import {
   Card,
   Dialog,
   FAB,
-  List,
   Portal,
   SegmentedButtons,
   Text,
   TextInput,
   useTheme,
 } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAccounts, useAddAccount } from '@/lib/hooks';
 import { formatMinor } from '@/lib/format';
+import { cardStyle } from '@/theme';
 
 const ACCOUNT_TYPES = [
   { value: 'cash', label: 'Cash' },
@@ -60,23 +61,34 @@ export default function AccountsScreen() {
         data={accounts.data?.accounts ?? []}
         keyExtractor={(a) => a.id}
         renderItem={({ item }) => (
-          <List.Item
-            title={item.name}
-            description={ACCOUNT_TYPES.find((t) => t.value === item.type)?.label ?? item.type}
-            left={(props) => (
-              <List.Icon
-                {...props}
-                icon={
-                  item.type === 'cash' ? 'cash' : item.type === 'credit_card' ? 'credit-card-outline' : 'bank-outline'
+          <View style={[styles.row, cardStyle]}>
+            <View style={styles.rowIcon}>
+              <MaterialCommunityIcons
+                name={
+                  item.type === 'cash'
+                    ? 'cash'
+                    : item.type === 'credit_card'
+                      ? 'credit-card-outline'
+                      : item.type === 'bank'
+                        ? 'bank-outline'
+                        : 'wallet-outline'
                 }
+                size={18}
+                color="#555"
               />
-            )}
-            right={() => (
-              <Text variant="titleSmall" style={styles.balance}>
-                {formatMinor(item.balanceMinor, item.currency)}
+            </View>
+            <View style={styles.rowMain}>
+              <Text variant="bodyLarge" style={{ fontWeight: '600' }}>
+                {item.name}
               </Text>
-            )}
-          />
+              <Text variant="bodySmall" style={{ opacity: 0.55 }}>
+                {ACCOUNT_TYPES.find((t) => t.value === item.type)?.label ?? item.type}
+              </Text>
+            </View>
+            <Text variant="titleSmall" style={{ fontWeight: '700' }}>
+              {formatMinor(item.balanceMinor, item.currency)}
+            </Text>
+          </View>
         )}
       />
 
@@ -116,8 +128,25 @@ export default function AccountsScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  totalCard: { margin: 12 },
-  balance: { alignSelf: 'center', paddingRight: 8 },
+  totalCard: { marginHorizontal: 4, marginBottom: 14, borderRadius: 14 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginHorizontal: 4,
+    marginBottom: 8,
+  },
+  rowIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#F1F2F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  rowMain: { flex: 1 },
   field: { marginBottom: 12 },
   fab: { position: 'absolute', right: 16, bottom: 16 },
 });
