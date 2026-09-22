@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: moneymanager
+          POSTGRES_PASSWORD: moneymanager
+          POSTGRES_DB: moneymanager
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U moneymanager -d moneymanager"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://moneymanager:moneymanager@localhost:5432/moneymanager
+      JWT_SECRET: ci-secret-that-is-long-enough
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
