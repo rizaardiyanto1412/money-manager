@@ -3,6 +3,8 @@ import { cors } from 'hono/cors';
 import { createMiddleware } from 'hono/factory';
 import type { Env } from './env.js';
 import type { Database } from './db/client.js';
+import { eq } from 'drizzle-orm';
+import { users } from './db/schema.js';
 import { authMiddleware } from './middleware/auth.js';
 import { authRoutes } from './routes/auth.js';
 import { accountsRoutes } from './routes/accounts.js';
@@ -44,7 +46,13 @@ export function createApp(deps: AppDeps) {
   authed.route('/api-keys', apiKeysRoutes);
   authed.route('/recurring', recurringRoutes);
   authed.route('/bookmarks', bookmarksRoutes);
-  authed.get('/me', (c) => c.json({ auth: c.get('auth') }));
+  authed.get('/me', async (c) => {
+    const { userId } = c.get('auth');
+    const [user] = await c.get('db').select().from(users).where(eq(users.id, userId)).limit(1);
+    if (!user) return c.json({ error: 'User not found' }, 404);
+    const { passwordHash: _, ...profile } = user;
+    return c.json({ user: profile });
+  });
 
   app.route('/api/auth', authRoutes);
   app.route('/api', authed);

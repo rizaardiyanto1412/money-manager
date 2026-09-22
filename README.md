@@ -8,7 +8,7 @@ Personal money manager — expenses, income, transfers, budgets — with a web/m
 | --- | --- |
 | `apps/api` | REST API — Hono + Drizzle + Postgres. Auth (JWT + scoped API keys), CRUD for accounts/categories/transactions/budgets/recurring/bookmarks, stats |
 | `apps/mcp` | MCP server — `@modelcontextprotocol/server` v2, stdio + streamable HTTP |
-| `apps/mobile` | *(next)* Expo app — iOS + Android + web from one codebase |
+| `apps/mobile` | Expo app — iOS + Android + web from one codebase (expo-router, RN Paper, react-query) |
 | `packages/shared` | zod schemas + types shared by api, mcp, mobile |
 
 Money is always integer **minor units** (`amountMinor`) — no floats.
@@ -22,6 +22,14 @@ npm run db:up                   # postgres in docker
 npm run db:migrate              # apply migrations
 npm run dev:api                 # api on :8787
 ```
+
+Run the app (web):
+
+```bash
+EXPO_PUBLIC_API_URL=http://localhost:8787 npm run web -w apps/mobile
+```
+
+`npm run android` / `npm run ios` (workspace `apps/mobile`) for native via Expo Go / dev builds.
 
 Create a user + API key, then run the MCP server:
 
@@ -54,4 +62,4 @@ Remote endpoint: `POST http://<host>:8788/mcp` with `Authorization: Bearer mm_li
 
 ## Scripts
 
-`npm run typecheck`, `npm run lint`, `npm test`, `npm run build` (per workspace). Integration tests need `DATABASE_URL` (start postgres first).
+`npm run typecheck`, `npm run lint`, `npm test` (per workspace). Integration tests need `DATABASE_URL` (start postgres first). The mobile app typechecks via `tsc`; run it with `expo start`.
