@@ -20,6 +20,38 @@ export default function MoreScreen() {
       </Card>
 
       <List.Item
+        title="Statistics"
+        description="Spending breakdown by month"
+        left={(p) => <List.Icon {...p} icon="chart-pie" />}
+        right={(p) => <List.Icon {...p} icon="chevron-right" />}
+        onPress={() => router.push('/stats')}
+      />
+      <Divider />
+      <List.Item
+        title="Budgets"
+        description="Per-category monthly limits"
+        left={(p) => <List.Icon {...p} icon="wallet-outline" />}
+        right={(p) => <List.Icon {...p} icon="chevron-right" />}
+        onPress={() => router.push('/budgets')}
+      />
+      <Divider />
+      <List.Item
+        title="Recurring"
+        description="Automatic repeating transactions"
+        left={(p) => <List.Icon {...p} icon="repeat" />}
+        right={(p) => <List.Icon {...p} icon="chevron-right" />}
+        onPress={() => router.push('/recurring')}
+      />
+      <Divider />
+      <List.Item
+        title="Bookmarks"
+        description="One-tap frequent expenses"
+        left={(p) => <List.Icon {...p} icon="bookmark-outline" />}
+        right={(p) => <List.Icon {...p} icon="chevron-right" />}
+        onPress={() => router.push('/bookmarks')}
+      />
+      <Divider />
+      <List.Item
         title="Categories"
         description="Manage income/expense categories"
         left={(p) => <List.Icon {...p} icon="shape-outline" />}

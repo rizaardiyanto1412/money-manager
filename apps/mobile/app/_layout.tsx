@@ -27,6 +27,10 @@ function AuthGate() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="add" options={{ title: 'Add transaction', headerShown: true, presentation: 'card' }} />
+      <Stack.Screen name="stats" options={{ title: 'Statistics', headerShown: true }} />
+      <Stack.Screen name="budgets" options={{ title: 'Budgets', headerShown: true }} />
+      <Stack.Screen name="recurring" options={{ title: 'Recurring', headerShown: true }} />
+      <Stack.Screen name="bookmarks" options={{ title: 'Bookmarks', headerShown: true }} />
       <Stack.Screen name="categories" options={{ title: 'Categories', headerShown: true }} />
       <Stack.Screen name="api-keys" options={{ title: 'API Keys', headerShown: true }} />
       <Stack.Screen name="transaction/[id]" options={{ title: 'Transaction', headerShown: true }} />
