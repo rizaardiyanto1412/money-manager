@@ -29,6 +29,18 @@ services:
       postgres:
         condition: service_healthy
 
+  web:
+    build:
+      context: .
+      dockerfile: apps/mobile/Dockerfile
+      args:
+        # browser talks to the api directly — use your public https origin
+        EXPO_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:8787}
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
   mcp:
     build:
       context: .

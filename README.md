@@ -56,9 +56,25 @@ Write tools take **account/category names or UUIDs** — an agent can say `add_e
 
 Remote endpoint: `POST http://<host>:8788/mcp` with `Authorization: Bearer mm_live_...`. Add to any MCP client as a streamable-HTTP server.
 
+## Import / export
+
+- **Import (Realbyte Money Manager):** app → More → Import, or
+  `POST /api/import/realbyte?dryRun=1` (multipart `file`) to preview, without the flag to commit.
+  Understands the documented Excel layout (`Date, Account, Category, Subcategory, Note, Amount, Income/Expense, Description`,
+  `mm/dd/yyyy`, `Transfer-Out` uses Category as the destination account). Missing accounts/categories are
+  auto-created; re-imports skip duplicates. `.mmbak` backups (zip+SQLite) are not supported yet — use the Excel export.
+- **Export:** app → More → Export CSV, or `GET /api/transactions/export.csv?from=&to=`.
+
 ## Deploy
 
-`docker compose up -d` runs postgres + api + mcp. Put them behind your TLS reverse proxy; expose `/mcp` only to your agents.
+```bash
+PUBLIC_API_URL=https://api.yourdomain.com docker compose up -d --build
+```
+
+Runs postgres + api (:8787) + mcp (:8788) + web (:3000, static Expo bundle via nginx).
+Put them behind your TLS reverse proxy (Caddy/Traefik/nginx); expose `/mcp` only to your agents.
+
+For iOS/Android store builds, run `eas build` from `apps/mobile` (needs an Expo account).
 
 ## Scripts
 

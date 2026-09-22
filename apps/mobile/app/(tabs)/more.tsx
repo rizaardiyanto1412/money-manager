@@ -1,12 +1,23 @@
 import { ScrollView, StyleSheet } from 'react-native';
-import { Button, Card, Divider, List, Text, useTheme } from 'react-native-paper';
+import { Button, Card, Divider, List, Snackbar, Text, useTheme } from 'react-native-paper';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useSession } from '@/lib/session';
+import { exportTransactionsCsv } from '@/lib/export';
 
 export default function MoreScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { user, logout } = useSession();
+  const [toast, setToast] = useState<string | null>(null);
+
+  const doExport = async () => {
+    try {
+      await exportTransactionsCsv();
+    } catch (e) {
+      setToast(e instanceof Error ? e.message : 'Export failed');
+    }
+  };
 
   return (
     <ScrollView style={[styles.flex, { backgroundColor: theme.colors.background }]}>
@@ -60,6 +71,22 @@ export default function MoreScreen() {
       />
       <Divider />
       <List.Item
+        title="Import"
+        description="Money Manager (Realbyte) Excel/CSV backup"
+        left={(p) => <List.Icon {...p} icon="database-import-outline" />}
+        right={(p) => <List.Icon {...p} icon="chevron-right" />}
+        onPress={() => router.push('/import')}
+      />
+      <Divider />
+      <List.Item
+        title="Export CSV"
+        description="Download all transactions as CSV"
+        left={(p) => <List.Icon {...p} icon="download-outline" />}
+        right={(p) => <List.Icon {...p} icon="chevron-right" />}
+        onPress={doExport}
+      />
+      <Divider />
+      <List.Item
         title="API keys"
         description="Keys for the MCP server & agents"
         left={(p) => <List.Icon {...p} icon="key-outline" />}
@@ -71,6 +98,9 @@ export default function MoreScreen() {
       <Button mode="outlined" onPress={logout} style={styles.logout} icon="logout">
         Sign out
       </Button>
+      <Snackbar visible={!!toast} onDismiss={() => setToast(null)} duration={3000}>
+        {toast}
+      </Snackbar>
     </ScrollView>
   );
 }

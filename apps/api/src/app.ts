@@ -15,6 +15,7 @@ import { statsRoutes } from './routes/stats.js';
 import { apiKeysRoutes } from './routes/apikeys.js';
 import { recurringRoutes } from './routes/recurring.js';
 import { bookmarksRoutes } from './routes/bookmarks.js';
+import { importRoutes } from './routes/import.js';
 
 export interface AppDeps {
   env: Env;
@@ -46,12 +47,17 @@ export function createApp(deps: AppDeps) {
   authed.route('/api-keys', apiKeysRoutes);
   authed.route('/recurring', recurringRoutes);
   authed.route('/bookmarks', bookmarksRoutes);
+  authed.route('/import', importRoutes);
   authed.get('/me', async (c) => {
     const { userId } = c.get('auth');
-    const [user] = await c.get('db').select().from(users).where(eq(users.id, userId)).limit(1);
+    const [user] = await c
+      .get('db')
+      .select({ id: users.id, email: users.email, name: users.name, currency: users.currency, createdAt: users.createdAt })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
     if (!user) return c.json({ error: 'User not found' }, 404);
-    const { passwordHash: _, ...profile } = user;
-    return c.json({ user: profile });
+    return c.json({ user });
   });
 
   app.route('/api/auth', authRoutes);

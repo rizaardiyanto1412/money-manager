@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { and, desc, eq, gte, ilike, lte, or, type SQL } from 'drizzle-orm';
+import { and, desc, eq, gte, ilike, lte, or, sql, type SQL } from 'drizzle-orm';
 import {
   createTransactionSchema,
   listTransactionsQuerySchema,
@@ -78,6 +78,50 @@ export const transactionsRoutes = new Hono()
 
     const [row] = await db.insert(transactions).values({ ...input, userId }).returning();
     return c.json({ transaction: row }, 201);
+  })
+  .get('/export.csv', async (c) => {
+    const db = c.get('db');
+    const { userId } = c.get('auth');
+    const from = c.req.query('from');
+    const to = c.req.query('to');
+    const filters: SQL[] = [eq(transactions.userId, userId)];
+    if (from) filters.push(gte(transactions.date, from));
+    if (to) filters.push(lte(transactions.date, to));
+
+    const rows = await db
+      .select({
+        date: transactions.date,
+        type: transactions.type,
+        amountMinor: transactions.amountMinor,
+        memo: transactions.memo,
+        account: accounts.name,
+        toAccount: sql<string | null>`(select a2.name from ${accounts} a2 where a2.id = ${transactions.toAccountId})`,
+        category: sql<string | null>`(select c2.name from ${categories} c2 where c2.id = ${transactions.categoryId})`,
+      })
+      .from(transactions)
+      .innerJoin(accounts, eq(accounts.id, transactions.accountId))
+      .where(and(...filters))
+      .orderBy(transactions.date);
+
+    const esc = (v: string | number | null) => {
+      const s = v === null ? '' : String(v);
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const csv = [
+      'date,type,account,toAccount,category,amount,memo',
+      ...rows.map((r) =>
+        [r.date, r.type, r.account, r.toAccount, r.category, r.amountMinor, r.memo]
+          .map(esc)
+          .join(','),
+      ),
+    ].join('\n');
+
+    return new Response(csv, {
+      headers: {
+        'content-type': 'text/csv; charset=utf-8',
+        'content-disposition': `attachment; filename="money-manager-${from ?? 'all'}.csv"`,
+      },
+    });
   })
   .get('/:id', async (c) => {
     const db = c.get('db');
